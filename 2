@@ -1,0 +1,32 @@
+# Weather App
+
+require 'net/http'
+require 'json'
+
+class WeatherApp
+  API_KEY = 'your_api_key'
+
+  def initialize(city)
+    @city = city
+  end
+
+  def get_weather
+    uri = URI("https://api.weatherapi.com/v1/current.json?key=#{API_KEY}&q=#{@city}")
+    response = Net::HTTP.get(uri)
+    data = JSON.parse(response)
+
+    if data['error']
+      puts "Error: #{data['error']['message']}"
+    else
+      temperature = data['current']['temp_c']
+      condition = data['current']['condition']['text']
+      puts "Current weather in #{@city}: #{temperature}°C, #{condition}"
+    end
+  rescue StandardError => e
+    puts "Error: #{e.message}"
+  end
+end
+
+# Пример использования
+weather_app = WeatherApp.new('London')
+weather_app.get_weather
